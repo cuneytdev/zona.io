@@ -1,5 +1,5 @@
 import { Application as PIXIApplication, Assets } from 'pixi.js';
-import { GAME_WIDTH, GAME_HEIGHT, BACKGROUND_COLOR } from '@utils/Constants';
+import { GameDimensions, BACKGROUND_COLOR } from '@utils/Constants';
 import type { GameConfig } from '@types/index';
 import { SceneManager } from './SceneManager';
 import { AssetLoader } from './AssetLoader';
@@ -19,8 +19,8 @@ export class Application {
 
   constructor(config?: Partial<GameConfig>) {
     this.config = {
-      width: config?.width ?? GAME_WIDTH,
-      height: config?.height ?? GAME_HEIGHT,
+      width: config?.width ?? GameDimensions.GAME_WIDTH,
+      height: config?.height ?? GameDimensions.GAME_HEIGHT,
       backgroundColor: config?.backgroundColor ?? BACKGROUND_COLOR,
       resolution: config?.resolution ?? (window.devicePixelRatio || 1)
     };
@@ -39,6 +39,7 @@ export class Application {
       backgroundColor: this.config.backgroundColor,
       resolution: this.config.resolution,
       autoDensity: true,
+      resizeTo: window, // Otomatik resize
     });
 
     // Canvas'ı DOM'a ekle
@@ -67,7 +68,23 @@ export class Application {
     // Oyun döngüsünü başlat
     this.gameLoop.start();
 
+    // Listen to resize events
+    GameDimensions.onResize(() => {
+      this.onResize();
+    });
+
     console.log('🎮 ZONA initialized successfully!');
+  }
+
+  /**
+   * Handle window resize
+   */
+  private onResize(): void {
+    // Sahne resize bildirimini gönder
+    const currentScene = this.sceneManager.getCurrentScene();
+    if (currentScene && 'onResize' in currentScene) {
+      (currentScene as any).onResize();
+    }
   }
 
   /**

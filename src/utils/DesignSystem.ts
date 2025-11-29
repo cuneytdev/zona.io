@@ -198,12 +198,16 @@ export const DesignSystem = {
    * 📐 LAYOUT
    */
   layout: {
-    // Screen positions
-    screen: {
-      centerX: 640,  // GAME_WIDTH / 2
-      centerY: 360,  // GAME_HEIGHT / 2
-      width: 1280,
-      height: 720,
+    // Screen positions (dynamic - will be updated)
+    get screen() {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      return {
+        centerX: width / 2,
+        centerY: height / 2,
+        width: width,
+        height: height,
+      };
     },
     
     // Z-index layers
@@ -218,11 +222,14 @@ export const DesignSystem = {
       modal: 7,
     },
     
-    // Common positions
-    positions: {
-      titleY: 240,        // GAME_HEIGHT / 3
-      buttonStartY: 460,  // GAME_HEIGHT / 2 + 100
-      hudPadding: 20,
+    // Common positions (dynamic)
+    get positions() {
+      const height = window.innerHeight;
+      return {
+        titleY: height / 3,
+        buttonStartY: height / 2 + 100,
+        hudPadding: 20,
+      };
     }
   },
 

@@ -59,5 +59,12 @@ export abstract class BaseScene implements IScene {
   protected onDestroy(): void {
     // Override edilebilir
   }
+
+  /**
+   * Window resize olduğunda çağrılır (override edilebilir)
+   */
+  public onResize(): void {
+    // Override edilebilir
+  }
 }
 
