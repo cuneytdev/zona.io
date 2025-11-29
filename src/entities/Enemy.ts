@@ -1,38 +1,54 @@
-import { Graphics } from 'pixi.js';
+import { Graphics, FillGradient } from 'pixi.js';
 import { Entity } from './Entity';
 import { GAME_WIDTH, GAME_HEIGHT } from '@utils/Constants';
+import { DesignSystem as DS } from '@utils/DesignSystem';
 
 /**
- * Düşman entity'si
- * Basit AI ve hareket
+ * ZONA - Enemy Entity (NEON VOID Theme)
+ * Düşman entity - Hot pink orb with purple glow
  */
 export class Enemy extends Entity {
   private graphic!: Graphics;
   private moveDirection: number = 1;
+  private pulsePhase: number = 0;
 
   constructor(x: number, y: number) {
-    super(x, y, 50, 50);
+    super(x, y, DS.sizes.entity.enemy, DS.sizes.entity.enemy);
     this.speed = 2;
   }
 
   protected createGraphics(): void {
     this.graphic = new Graphics();
+    const radius = this.width / 2;
     
-    // Basit bir kare (düşman temsili)
-    this.graphic.rect(-this.width / 2, -this.height / 2, this.width, this.height);
-    this.graphic.fill(0xff4757);
+    // Outer glow
+    this.graphic.circle(0, 0, radius + 5);
+    this.graphic.fill({ color: DS.colors.entity.enemyGlow, alpha: 0.3 });
     
-    // Gözler
-    this.graphic.circle(-12, -8, 4);
-    this.graphic.fill(0x000000);
-    this.graphic.circle(12, -8, 4);
-    this.graphic.fill(0x000000);
+    // Main orb with gradient
+    const gradient = new FillGradient(0, -radius, 0, radius);
+    gradient.addColorStop(0, DS.colors.entity.enemy);
+    gradient.addColorStop(1, DS.colors.entity.enemyGlow);
+    
+    this.graphic.circle(0, 0, radius);
+    this.graphic.fill(gradient);
+    
+    // Bright core
+    this.graphic.circle(0, 0, radius / 3);
+    this.graphic.fill({ color: 0xffffff, alpha: 0.9 });
+    
+    // Neon border
+    this.graphic.circle(0, 0, radius);
+    this.graphic.stroke({ 
+      color: DS.colors.entity.enemyGlow, 
+      width: 2 
+    });
     
     this.addChild(this.graphic);
   }
 
   /**
-   * Düşman güncelleme (basit AI)
+   * Düşman güncelleme (basit AI + pulse animation)
    */
   public update(deltaTime: number): void {
     super.update(deltaTime);
@@ -44,6 +60,11 @@ export class Enemy extends Entity {
     if (this.x <= this.width / 2 || this.x >= GAME_WIDTH - this.width / 2) {
       this.moveDirection *= -1;
     }
+
+    // Pulsing glow animation
+    this.pulsePhase += deltaTime / 1000;
+    const pulse = Math.sin(this.pulsePhase * 4) * 0.1 + 1;
+    this.scale.set(pulse);
   }
 }
 

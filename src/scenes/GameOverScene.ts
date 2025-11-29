@@ -1,73 +1,110 @@
-import { Text, Graphics } from 'pixi.js';
+import { Text, Graphics, FillGradient } from 'pixi.js';
 import type { Application as PIXIApplication } from 'pixi.js';
 import type { SceneManager } from '@core/SceneManager';
 import { BaseScene } from './BaseScene';
 import { Button } from '@ui/Button';
 import { GAME_WIDTH, GAME_HEIGHT } from '@utils/Constants';
+import { DesignSystem as DS } from '@utils/DesignSystem';
 
 /**
- * Game Over sahnesi
+ * ZONA - Game Over Scene (NEON VOID Theme)
  * Skor gösterimi ve restart
  */
 export class GameOverScene extends BaseScene {
   private gameOverText!: Text;
+  private glowEffect!: Graphics;
   private restartButton!: Button;
   private menuButton!: Button;
+  private glowPhase: number = 0;
 
   constructor(app: PIXIApplication, sceneManager: SceneManager) {
     super(app, sceneManager, 'gameover');
   }
 
   protected onCreate(): void {
-    // Arka plan
+    // Dark gradient background - Design System
     const background = new Graphics();
+    const gradient = new FillGradient(0, 0, 0, GAME_HEIGHT);
+    gradient.addColorStop(0, DS.colors.background.primary);
+    gradient.addColorStop(1, 0x2d1b2e); // Darker tone for game over
     background.rect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-    background.fill(0x2d1b2e);
+    background.fill(gradient);
     this.container.addChild(background);
 
-    // Game Over yazısı
+    // Danger glow effect
+    this.glowEffect = new Graphics();
+    this.glowEffect.circle(0, 0, 200);
+    this.glowEffect.fill({ color: DS.colors.neon.pink, alpha: 0.1 });
+    this.glowEffect.position.set(DS.layout.screen.centerX, DS.layout.positions.titleY);
+    this.container.addChild(this.glowEffect);
+
+    // Game Over text - Neon danger style
     this.gameOverText = new Text({
       text: 'GAME OVER',
       style: {
-        fontFamily: 'Arial',
-        fontSize: 60,
-        fontWeight: 'bold',
-        fill: 0xff4757,
+        fontFamily: DS.typography.fontFamily.bold,
+        fontSize: DS.typography.fontSize['4xl'],
+        fontWeight: DS.typography.fontWeight.heavy,
+        fill: DS.colors.background.primary,
+        stroke: { color: DS.colors.neon.pink, width: 4 },
+        letterSpacing: DS.typography.letterSpacing.wide,
+        dropShadow: {
+          alpha: DS.effects.alpha.solid,
+          angle: 0,
+          blur: DS.effects.shadow.lg.blur,
+          color: DS.colors.neon.pink,
+          distance: 0,
+        },
       }
     });
     this.gameOverText.anchor.set(0.5);
-    this.gameOverText.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 3);
+    this.gameOverText.position.set(DS.layout.screen.centerX, DS.layout.positions.titleY);
     this.container.addChild(this.gameOverText);
 
-    // Restart butonu
+    // Restart button - Success preset
+    const successPreset = DS.presets.button.success;
     this.restartButton = new Button({
       text: 'RESTART',
-      width: 180,
-      height: 50,
-      backgroundColor: 0x16c79a,
-      textColor: 0xffffff,
+      width: DS.sizes.button.md.width,
+      height: DS.sizes.button.md.height,
+      backgroundColor: successPreset.backgroundColor,
+      textColor: successPreset.textColor,
+      fontSize: successPreset.fontSize,
+      borderRadius: successPreset.borderRadius,
       onClick: () => this.onRestartClick()
     });
-    this.restartButton.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2);
+    this.restartButton.position.set(DS.layout.screen.centerX, DS.layout.screen.centerY);
     this.container.addChild(this.restartButton);
 
-    // Menu butonu
+    // Menu button - Secondary preset
+    const secondaryPreset = DS.presets.button.secondary;
     this.menuButton = new Button({
       text: 'MAIN MENU',
-      width: 180,
-      height: 50,
-      backgroundColor: 0x2e86ab,
-      textColor: 0xffffff,
+      width: DS.sizes.button.md.width,
+      height: DS.sizes.button.md.height,
+      backgroundColor: secondaryPreset.backgroundColor,
+      textColor: secondaryPreset.textColor,
+      fontSize: secondaryPreset.fontSize,
+      borderRadius: secondaryPreset.borderRadius,
       onClick: () => this.onMenuClick()
     });
-    this.menuButton.position.set(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 70);
+    this.menuButton.position.set(DS.layout.screen.centerX, DS.layout.screen.centerY + 70);
     this.container.addChild(this.menuButton);
 
-    console.log('💀 GameOver scene created');
+    console.log('💀 GameOver scene - NEON VOID theme loaded');
   }
 
   protected onUpdate(deltaTime: number): void {
-    // Animasyon (opsiyonel)
+    const time = Date.now();
+    
+    // Danger glow pulse
+    this.glowPhase += deltaTime / 1000;
+    const pulse = Math.sin(this.glowPhase * 3) * 0.15 + 1;
+    this.glowEffect.scale.set(pulse);
+    this.glowEffect.alpha = 0.1 + Math.sin(this.glowPhase * 3) * 0.05;
+
+    // Game Over text subtle shake (danger feel)
+    this.gameOverText.x = DS.layout.screen.centerX + Math.sin(time / 100) * 2;
   }
 
   private onRestartClick(): void {

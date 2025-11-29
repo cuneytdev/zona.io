@@ -1,4 +1,4 @@
-import { Text, Graphics } from 'pixi.js';
+import { Text, Graphics, FillGradient } from 'pixi.js';
 import type { Application as PIXIApplication } from 'pixi.js';
 import type { SceneManager } from '@core/SceneManager';
 import { BaseScene } from './BaseScene';
@@ -8,10 +8,11 @@ import { HUD } from '@ui/HUD';
 import { InputSystem } from '@systems/InputSystem';
 import { CollisionSystem } from '@systems/CollisionSystem';
 import { GAME_WIDTH, GAME_HEIGHT, Keys } from '@utils/Constants';
+import { DesignSystem as DS } from '@utils/DesignSystem';
 
 /**
- * Ana oyun sahnesi
- * Gameplay ve entity yönetimi
+ * ZONA - Game Scene (NEON VOID Theme)
+ * Ana oyun sahnesi - Gameplay ve entity yönetimi
  */
 export class GameScene extends BaseScene {
   private player!: Player;
@@ -26,10 +27,13 @@ export class GameScene extends BaseScene {
   }
 
   protected onCreate(): void {
-    // Arka plan
+    // Animated gradient background - Design System
     const background = new Graphics();
+    const gradient = new FillGradient(0, 0, 0, GAME_HEIGHT);
+    gradient.addColorStop(0, DS.colors.background.primary);
+    gradient.addColorStop(1, DS.colors.background.secondary);
     background.rect(0, 0, GAME_WIDTH, GAME_HEIGHT);
-    background.fill(0x1a1a2e);
+    background.fill(gradient);
     this.container.addChild(background);
 
     // Sistemleri başlat
@@ -55,7 +59,7 @@ export class GameScene extends BaseScene {
       this.sceneManager.changeScene('menu');
     });
 
-    console.log('🎮 Game scene created');
+    console.log('🎮 Game scene - NEON VOID theme loaded');
   }
 
   protected onUpdate(deltaTime: number): void {

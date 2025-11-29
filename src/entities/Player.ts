@@ -1,32 +1,47 @@
 import { Graphics } from 'pixi.js';
 import { Entity } from './Entity';
 import { GAME_WIDTH, GAME_HEIGHT, Keys } from '@utils/Constants';
+import { DesignSystem as DS } from '@utils/DesignSystem';
 import type { InputSystem } from '@systems/InputSystem';
 
 /**
- * Oyuncu entity'si
- * Input handling ve oyuncu kontrolleri
+ * ZONA - Player Entity (NEON VOID Theme)
+ * Oyuncu entity - Mint green hexagon with cyan glow
  */
 export class Player extends Entity {
   private graphic!: Graphics;
 
   constructor(x: number, y: number) {
-    super(x, y, 60, 60);
+    super(x, y, DS.sizes.entity.player, DS.sizes.entity.player);
     this.speed = 5;
   }
 
   protected createGraphics(): void {
     this.graphic = new Graphics();
     
-    // Basit bir kare (player temsili)
-    this.graphic.rect(-this.width / 2, -this.height / 2, this.width, this.height);
-    this.graphic.fill(0x16c79a);
+    // Hexagon shape (NEON VOID style)
+    const points: number[] = [];
+    const size = this.width / 2;
     
-    // Gözler
-    this.graphic.circle(-15, -10, 5);
-    this.graphic.fill(0xffffff);
-    this.graphic.circle(15, -10, 5);
-    this.graphic.fill(0xffffff);
+    for (let i = 0; i < 6; i++) {
+      const angle = (Math.PI / 3) * i;
+      points.push(Math.cos(angle) * size, Math.sin(angle) * size);
+    }
+    
+    // Fill with mint green
+    this.graphic.poly(points);
+    this.graphic.fill(DS.colors.entity.player);
+    
+    // Neon cyan border with glow
+    this.graphic.poly(points);
+    this.graphic.stroke({ 
+      color: DS.colors.entity.playerGlow, 
+      width: 3 
+    });
+    
+    // Inner core (bright center)
+    this.graphic.circle(0, 0, size / 4);
+    this.graphic.fill({ color: 0xffffff, alpha: 0.8 });
     
     this.addChild(this.graphic);
   }

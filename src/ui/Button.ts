@@ -35,69 +35,66 @@ export class Button extends Container {
   }
 
   /**
-   * Modern buton görselini oluştur
+   * Modern buton görselini oluştur - NEON VOID theme
    */
   private createButton(): void {
     const { width, height, backgroundColor, textColor, text, fontSize, borderRadius } = this.options;
     const halfWidth = width / 2;
     const halfHeight = height / 2;
 
-    // Gölge (depth efekti için)
-    this.shadow = new Graphics();
-    this.shadow.roundRect(-halfWidth, -halfHeight + 4, width, height, borderRadius!);
-    this.shadow.fill({ color: 0x000000, alpha: 0.3 });
-    this.addChild(this.shadow);
+    // Outer glow (neon effect)
+    const outerGlow = new Graphics();
+    outerGlow.roundRect(-halfWidth - 2, -halfHeight - 2, width + 4, height + 4, borderRadius! + 2);
+    outerGlow.fill({ color: 0x00d9ff, alpha: 0.2 });
+    this.addChild(outerGlow);
 
     // Ana arka plan (gradient ile)
     this.background = new Graphics();
     
-    // Gradient oluştur (yukarıdan aşağıya)
+    // Gradient oluştur (dark theme için)
     const gradient = new FillGradient(0, -halfHeight, 0, halfHeight);
-    const lightColor = this.lightenColor(backgroundColor, 0.2);
-    const darkColor = this.darkenColor(backgroundColor, 0.1);
-    
-    gradient.addColorStop(0, lightColor);
-    gradient.addColorStop(1, darkColor);
+    gradient.addColorStop(0, 0x16213e); // Dark blue-grey
+    gradient.addColorStop(1, 0x1a2a4a); // Slightly lighter
 
     // Rounded rectangle çiz
     this.background.roundRect(-halfWidth, -halfHeight, width, height, borderRadius!);
     this.background.fill(gradient);
     
-    // Border/outline ekle
+    // Neon border (cyan glow)
     this.background.roundRect(-halfWidth, -halfHeight, width, height, borderRadius!);
     this.background.stroke({ 
-      color: this.lightenColor(backgroundColor, 0.4), 
+      color: 0x00d9ff, 
       width: 2,
-      alpha: 0.6
+      alpha: 0.8
     });
     
     this.addChild(this.background);
 
-    // İç glow efekti
+    // İç glow efekti (top highlight)
     const innerGlow = new Graphics();
-    innerGlow.roundRect(-halfWidth + 2, -halfHeight + 2, width - 4, height / 3, borderRadius! - 2);
-    innerGlow.fill({ color: 0xffffff, alpha: 0.15 });
+    innerGlow.roundRect(-halfWidth + 4, -halfHeight + 4, width - 8, height / 3, borderRadius! - 2);
+    innerGlow.fill({ color: 0x00d9ff, alpha: 0.1 });
     this.addChild(innerGlow);
 
-    // Text label
+    // Text label with neon glow
     this.label = new Text({
       text: text,
       style: {
         fontFamily: 'Arial, sans-serif',
         fontSize: fontSize,
         fontWeight: 'bold',
-        fill: textColor,
+        fill: 0xffffff,
         dropShadow: {
-          alpha: 0.5,
-          angle: Math.PI / 2,
-          blur: 2,
-          color: 0x000000,
-          distance: 2,
+          alpha: 0.8,
+          angle: 0,
+          blur: 8,
+          color: 0x00d9ff,
+          distance: 0,
         },
       }
     });
     this.label.anchor.set(0.5);
-    this.label.y = 1; // Hafif aşağı kaydır (depth hissi)
+    this.label.y = 1;
     this.addChild(this.label);
   }
 
@@ -116,13 +113,12 @@ export class Button extends Container {
   }
 
   /**
-   * Mouse butona basıldığında
+   * Mouse butona basıldığında - Neon flash effect
    */
   private onButtonDown(): void {
     this.isPressed = true;
-    this.background.tint = 0xcccccc; // Hafif koyulaştır
-    this.shadow.alpha = 0.5;
-    this.label.y = 2; // Sadece text'i hafif aşağı kaydır
+    this.background.tint = 0xdddddd;
+    this.label.y = 2;
   }
 
   /**
@@ -134,23 +130,23 @@ export class Button extends Container {
       this.isPressed = false;
       
       if (this.isHovered) {
-        this.background.tint = 0xffffff; // Parlak
+        this.background.tint = 0xffffff;
       } else {
-        this.background.tint = 0xeeeeee; // Normal
+        this.background.tint = 0xeeeeee;
       }
-      this.shadow.alpha = 1.0;
       this.label.y = 1;
     }
   }
 
   /**
-   * Mouse butona geldiğinde
+   * Mouse butona geldiğinde - Neon glow intensify
    */
   private onButtonHover(): void {
     this.isHovered = true;
     if (!this.isPressed) {
-      this.background.tint = 0xffffff; // Parla
-      this.shadow.alpha = 1.2; // Gölgeyi belirginleştir
+      this.background.tint = 0xffffff;
+      // Neon border glow intensify
+      this.children[0].alpha = 0.4; // outer glow
     }
   }
 
@@ -160,9 +156,9 @@ export class Button extends Container {
   private onButtonOut(): void {
     this.isHovered = false;
     this.isPressed = false;
-    this.background.tint = 0xeeeeee; // Normal ton
-    this.shadow.alpha = 1.0;
+    this.background.tint = 0xeeeeee;
     this.label.y = 1;
+    this.children[0].alpha = 0.2; // outer glow normal
   }
 
   /**
