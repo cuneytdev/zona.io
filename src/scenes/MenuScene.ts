@@ -3,8 +3,10 @@ import type { Application as PIXIApplication } from 'pixi.js';
 import type { SceneManager } from '@core/SceneManager';
 import { BaseScene } from './BaseScene';
 import { Button } from '@ui/Button';
+import { LanguageSwitcher } from '@ui/LanguageSwitcher';
 import { GAME_WIDTH, GAME_HEIGHT } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
+import { i18n } from '@utils/i18n';
 
 /**
  * ZONA - NEON VOID Menu Scene
@@ -15,12 +17,17 @@ export class MenuScene extends BaseScene {
   private titleGlow!: Graphics;
   private subtitle!: Text;
   private startButton!: Button;
+  private langSwitcher!: LanguageSwitcher;
+  private versionText!: Text;
   private grid!: Graphics;
   private particles: Array<{ x: number; y: number; vy: number; graphic: Graphics }> = [];
   private glowPhase: number = 0;
 
   constructor(app: PIXIApplication, sceneManager: SceneManager) {
     super(app, sceneManager, 'menu');
+    
+    // Subscribe to language changes
+    i18n.onLanguageChange(() => this.updateTexts());
   }
 
   protected onCreate(): void {
@@ -48,7 +55,7 @@ export class MenuScene extends BaseScene {
 
     // ZONA Logo - Design System preset
     this.titleText = new Text({
-      text: 'ZONA',
+      text: i18n.t('menu.title'),
       style: {
         ...DS.presets.text.title,
         fill: DS.colors.background.primary,
@@ -68,7 +75,7 @@ export class MenuScene extends BaseScene {
 
     // Outer glow for title - Design System
     const titleGlowText = new Text({
-      text: 'ZONA',
+      text: i18n.t('menu.title'),
       style: {
         ...DS.presets.text.title,
         fill: 0x000000,
@@ -90,7 +97,7 @@ export class MenuScene extends BaseScene {
 
     // Subtitle - Design System preset
     this.subtitle = new Text({
-      text: 'NEON VOID',
+      text: i18n.t('menu.subtitle'),
       style: DS.presets.text.subtitle
     });
     this.subtitle.anchor.set(0.5);
@@ -103,7 +110,7 @@ export class MenuScene extends BaseScene {
     // Start button - Design System preset
     const buttonPreset = DS.presets.button.primary;
     this.startButton = new Button({
-      text: 'START GAME',
+      text: i18n.t('menu.startGame'),
       width: DS.sizes.button.lg.width,
       height: DS.sizes.button.lg.height,
       backgroundColor: buttonPreset.backgroundColor,
@@ -115,13 +122,18 @@ export class MenuScene extends BaseScene {
     this.startButton.position.set(DS.layout.screen.centerX, DS.layout.positions.buttonStartY);
     this.container.addChild(this.startButton);
 
+    // Language switcher - Top right
+    this.langSwitcher = new LanguageSwitcher();
+    this.langSwitcher.position.set(GAME_WIDTH - 140, DS.layout.positions.hudPadding);
+    this.container.addChild(this.langSwitcher);
+
     // Version text - Design System
-    const version = new Text({
-      text: 'v1.0.0',
+    this.versionText = new Text({
+      text: i18n.t('common.version'),
       style: DS.presets.text.caption
     });
-    version.position.set(DS.layout.positions.hudPadding, GAME_HEIGHT - 30);
-    this.container.addChild(version);
+    this.versionText.position.set(DS.layout.positions.hudPadding, GAME_HEIGHT - 30);
+    this.container.addChild(this.versionText);
 
     console.log('🎮 ZONA Menu - NEON VOID theme loaded');
   }
@@ -249,6 +261,16 @@ export class MenuScene extends BaseScene {
   private onStartClick(): void {
     console.log('🎮 Starting ZONA...');
     this.sceneManager.changeScene('game');
+  }
+
+  /**
+   * Update texts when language changes
+   */
+  private updateTexts(): void {
+    this.titleText.text = i18n.t('menu.title');
+    this.subtitle.text = i18n.t('menu.subtitle');
+    this.startButton.setText(i18n.t('menu.startGame'));
+    this.versionText.text = i18n.t('common.version');
   }
 
   protected onDestroy(): void {

@@ -1,6 +1,7 @@
 import { Container, Text, Graphics } from 'pixi.js';
 import { GAME_WIDTH } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
+import { i18n } from '@utils/i18n';
 
 /**
  * ZONA - HUD (NEON VOID Theme)
@@ -14,6 +15,9 @@ export class HUD extends Container {
   constructor() {
     super();
     this.createHUD();
+    
+    // Subscribe to language changes
+    i18n.onLanguageChange(() => this.updateText());
   }
 
   /**
@@ -35,7 +39,7 @@ export class HUD extends Container {
 
     // Score text
     this.scoreText = new Text({
-      text: 'Score: 0',
+      text: `${i18n.t('game.score')}: 0`,
       style: {
         fontFamily: DS.typography.fontFamily.mono,
         fontSize: DS.typography.fontSize.xl,
@@ -62,7 +66,14 @@ export class HUD extends Container {
    */
   public setScore(score: number): void {
     this.score = score;
-    this.scoreText.text = `Score: ${this.score}`;
+    this.updateText();
+  }
+
+  /**
+   * Update text with current language
+   */
+  private updateText(): void {
+    this.scoreText.text = `${i18n.t('game.score')}: ${this.score}`;
   }
 
   /**

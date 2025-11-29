@@ -5,6 +5,7 @@ import { BaseScene } from './BaseScene';
 import { Button } from '@ui/Button';
 import { GAME_WIDTH, GAME_HEIGHT } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
+import { i18n } from '@utils/i18n';
 
 /**
  * ZONA - Game Over Scene (NEON VOID Theme)
@@ -19,6 +20,9 @@ export class GameOverScene extends BaseScene {
 
   constructor(app: PIXIApplication, sceneManager: SceneManager) {
     super(app, sceneManager, 'gameover');
+    
+    // Subscribe to language changes
+    i18n.onLanguageChange(() => this.updateTexts());
   }
 
   protected onCreate(): void {
@@ -40,7 +44,7 @@ export class GameOverScene extends BaseScene {
 
     // Game Over text - Neon danger style
     this.gameOverText = new Text({
-      text: 'GAME OVER',
+      text: i18n.t('gameOver.title'),
       style: {
         fontFamily: DS.typography.fontFamily.bold,
         fontSize: DS.typography.fontSize['4xl'],
@@ -64,7 +68,7 @@ export class GameOverScene extends BaseScene {
     // Restart button - Success preset
     const successPreset = DS.presets.button.success;
     this.restartButton = new Button({
-      text: 'RESTART',
+      text: i18n.t('gameOver.restart'),
       width: DS.sizes.button.md.width,
       height: DS.sizes.button.md.height,
       backgroundColor: successPreset.backgroundColor,
@@ -79,7 +83,7 @@ export class GameOverScene extends BaseScene {
     // Menu button - Secondary preset
     const secondaryPreset = DS.presets.button.secondary;
     this.menuButton = new Button({
-      text: 'MAIN MENU',
+      text: i18n.t('gameOver.mainMenu'),
       width: DS.sizes.button.md.width,
       height: DS.sizes.button.md.height,
       backgroundColor: secondaryPreset.backgroundColor,
@@ -115,6 +119,15 @@ export class GameOverScene extends BaseScene {
   private onMenuClick(): void {
     console.log('🏠 Returning to menu...');
     this.sceneManager.changeScene('menu');
+  }
+
+  /**
+   * Update texts when language changes
+   */
+  private updateTexts(): void {
+    this.gameOverText.text = i18n.t('gameOver.title');
+    this.restartButton.setText(i18n.t('gameOver.restart'));
+    this.menuButton.setText(i18n.t('gameOver.mainMenu'));
   }
 
   protected onDestroy(): void {
