@@ -1,6 +1,6 @@
 import { Graphics } from 'pixi.js';
 import { Entity } from './Entity';
-import { GAME_WIDTH, GAME_HEIGHT, Keys } from '@utils/Constants';
+import { GameDimensions } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
 import type { InputSystem } from '@systems/InputSystem';
 
@@ -21,7 +21,7 @@ export class Player extends Entity {
     
     // Hexagon shape (NEON VOID style)
     const points: number[] = [];
-    const size = this.width / 2;
+    const size = this.entityWidth / 2;
     
     for (let i = 0; i < 6; i++) {
       const angle = (Math.PI / 3) * i;
@@ -49,23 +49,23 @@ export class Player extends Entity {
   /**
    * Oyuncu güncelleme (input ile)
    */
-  public update(deltaTime: number, inputSystem: InputSystem): void {
+  public updatePlayer(deltaTime: number, inputSystem: InputSystem): void {
     super.update(deltaTime);
 
     // Hareket kontrolü
     this.velocity.x = 0;
     this.velocity.y = 0;
 
-    if (inputSystem.isKeyDown(Keys.LEFT)) {
+    if (inputSystem.isKeyDown('ArrowLeft')) {
       this.velocity.x = -this.speed;
     }
-    if (inputSystem.isKeyDown(Keys.RIGHT)) {
+    if (inputSystem.isKeyDown('ArrowRight')) {
       this.velocity.x = this.speed;
     }
-    if (inputSystem.isKeyDown(Keys.UP)) {
+    if (inputSystem.isKeyDown('ArrowUp')) {
       this.velocity.y = -this.speed;
     }
-    if (inputSystem.isKeyDown(Keys.DOWN)) {
+    if (inputSystem.isKeyDown('ArrowDown')) {
       this.velocity.y = this.speed;
     }
 
@@ -75,10 +75,10 @@ export class Player extends Entity {
 
     // Ekran sınırları
     this.clampPosition(
-      this.width / 2,
-      GAME_WIDTH - this.width / 2,
-      this.height / 2,
-      GAME_HEIGHT - this.height / 2
+      this.entityWidth / 2,
+      GameDimensions.GAME_WIDTH - this.entityWidth / 2,
+      this.entityHeight / 2,
+      GameDimensions.GAME_HEIGHT - this.entityHeight / 2
     );
   }
 }

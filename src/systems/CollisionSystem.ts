@@ -9,8 +9,8 @@ export class CollisionSystem {
    * İki entity arasında çarpışma var mı kontrol et
    */
   public checkCollision(entity1: Entity, entity2: Entity): boolean {
-    const bounds1 = entity1.getBounds();
-    const bounds2 = entity2.getBounds();
+    const bounds1 = entity1.getCollisionBounds();
+    const bounds2 = entity2.getCollisionBounds();
 
     return this.aabbCollision(
       bounds1.x, bounds1.y, bounds1.width, bounds1.height,

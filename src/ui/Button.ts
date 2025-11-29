@@ -17,8 +17,7 @@ export interface ButtonOptions {
  */
 export class Button extends Container {
   private background!: Graphics;
-  private shadow!: Graphics;
-  private label!: Text;
+  private buttonLabel!: Text;
   private options: ButtonOptions;
   private isHovered: boolean = false;
   private isPressed: boolean = false;
@@ -38,7 +37,7 @@ export class Button extends Container {
    * Modern buton görselini oluştur - NEON VOID theme
    */
   private createButton(): void {
-    const { width, height, backgroundColor, textColor, text, fontSize, borderRadius } = this.options;
+    const { width, height, text, fontSize, borderRadius } = this.options;
     const halfWidth = width / 2;
     const halfHeight = height / 2;
 
@@ -77,7 +76,7 @@ export class Button extends Container {
     this.addChild(innerGlow);
 
     // Text label with neon glow
-    this.label = new Text({
+    this.buttonLabel = new Text({
       text: text,
       style: {
         fontFamily: 'Arial, sans-serif',
@@ -93,9 +92,9 @@ export class Button extends Container {
         },
       }
     });
-    this.label.anchor.set(0.5);
-    this.label.y = 1;
-    this.addChild(this.label);
+    this.buttonLabel.anchor.set(0.5);
+    this.buttonLabel.y = 1;
+    this.addChild(this.buttonLabel);
   }
 
   /**
@@ -118,7 +117,7 @@ export class Button extends Container {
   private onButtonDown(): void {
     this.isPressed = true;
     this.background.tint = 0xdddddd;
-    this.label.y = 2;
+    this.buttonLabel.y = 2;
   }
 
   /**
@@ -134,7 +133,7 @@ export class Button extends Container {
       } else {
         this.background.tint = 0xeeeeee;
       }
-      this.label.y = 1;
+      this.buttonLabel.y = 1;
     }
   }
 
@@ -157,37 +156,15 @@ export class Button extends Container {
     this.isHovered = false;
     this.isPressed = false;
     this.background.tint = 0xeeeeee;
-    this.label.y = 1;
+    this.buttonLabel.y = 1;
     this.children[0].alpha = 0.2; // outer glow normal
-  }
-
-  /**
-   * Rengi aydınlat
-   */
-  private lightenColor(color: number, amount: number): number {
-    const r = ((color >> 16) & 0xff) + Math.floor(255 * amount);
-    const g = ((color >> 8) & 0xff) + Math.floor(255 * amount);
-    const b = (color & 0xff) + Math.floor(255 * amount);
-    
-    return (Math.min(255, r) << 16) | (Math.min(255, g) << 8) | Math.min(255, b);
-  }
-
-  /**
-   * Rengi koyulaştır
-   */
-  private darkenColor(color: number, amount: number): number {
-    const r = ((color >> 16) & 0xff) - Math.floor(255 * amount);
-    const g = ((color >> 8) & 0xff) - Math.floor(255 * amount);
-    const b = (color & 0xff) - Math.floor(255 * amount);
-    
-    return (Math.max(0, r) << 16) | (Math.max(0, g) << 8) | Math.max(0, b);
   }
 
   /**
    * Buton metnini değiştir
    */
   public setText(text: string): void {
-    this.label.text = text;
+    this.buttonLabel.text = text;
   }
 }
 

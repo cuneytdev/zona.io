@@ -1,5 +1,5 @@
 import type { Application as PIXIApplication } from 'pixi.js';
-import type { IScene } from '@types/index';
+import type { IScene } from '../types';
 import { MenuScene } from '@scenes/MenuScene';
 import { GameScene } from '@scenes/GameScene';
 import { GameOverScene } from '@scenes/GameOverScene';

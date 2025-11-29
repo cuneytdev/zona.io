@@ -1,6 +1,6 @@
 import { Container } from 'pixi.js';
 import type { Application as PIXIApplication } from 'pixi.js';
-import type { IScene } from '@types/index';
+import type { IScene } from '../types';
 import type { SceneManager } from '@core/SceneManager';
 
 /**

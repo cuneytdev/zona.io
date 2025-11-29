@@ -1,4 +1,4 @@
-import { Text, Graphics, FillGradient } from 'pixi.js';
+import { Graphics, FillGradient } from 'pixi.js';
 import type { Application as PIXIApplication } from 'pixi.js';
 import type { SceneManager } from '@core/SceneManager';
 import { BaseScene } from './BaseScene';
@@ -7,7 +7,7 @@ import { Enemy } from '@entities/Enemy';
 import { HUD } from '@ui/HUD';
 import { InputSystem } from '@systems/InputSystem';
 import { CollisionSystem } from '@systems/CollisionSystem';
-import { GAME_WIDTH, GAME_HEIGHT, Keys } from '@utils/Constants';
+import { GameDimensions } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
 
 /**
@@ -29,10 +29,10 @@ export class GameScene extends BaseScene {
   protected onCreate(): void {
     // Animated gradient background - Design System
     const background = new Graphics();
-    const gradient = new FillGradient(0, 0, 0, GAME_HEIGHT);
+    const gradient = new FillGradient(0, 0, 0, GameDimensions.GAME_HEIGHT);
     gradient.addColorStop(0, DS.colors.background.primary);
     gradient.addColorStop(1, DS.colors.background.secondary);
-    background.rect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    background.rect(0, 0, GameDimensions.GAME_WIDTH, GameDimensions.GAME_HEIGHT);
     background.fill(gradient);
     this.container.addChild(background);
 
@@ -41,11 +41,11 @@ export class GameScene extends BaseScene {
     this.collisionSystem = new CollisionSystem();
 
     // Oyuncu oluştur
-    this.player = new Player(GAME_WIDTH / 2, GAME_HEIGHT - 100);
+    this.player = new Player(GameDimensions.GAME_WIDTH / 2, GameDimensions.GAME_HEIGHT - 100);
     this.container.addChild(this.player);
 
     // Test düşmanı
-    const enemy = new Enemy(GAME_WIDTH / 2, 100);
+    const enemy = new Enemy(GameDimensions.GAME_WIDTH / 2, 100);
     this.enemies.push(enemy);
     this.container.addChild(enemy);
 
@@ -55,7 +55,7 @@ export class GameScene extends BaseScene {
     this.container.addChild(this.hud);
 
     // ESC tuşu ile menüye dön
-    this.inputSystem.onKeyPress(Keys.ESCAPE, () => {
+    this.inputSystem.onKeyPress('Escape', () => {
       this.sceneManager.changeScene('menu');
     });
 
@@ -64,7 +64,7 @@ export class GameScene extends BaseScene {
 
   protected onUpdate(deltaTime: number): void {
     // Oyuncu güncelle
-    this.player.update(deltaTime, this.inputSystem);
+    this.player.updatePlayer(deltaTime, this.inputSystem);
 
     // Düşmanları güncelle
     for (const enemy of this.enemies) {

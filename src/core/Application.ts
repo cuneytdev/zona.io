@@ -1,6 +1,6 @@
-import { Application as PIXIApplication, Assets } from 'pixi.js';
+import { Application as PIXIApplication } from 'pixi.js';
 import { GameDimensions, BACKGROUND_COLOR } from '@utils/Constants';
-import type { GameConfig } from '@types/index';
+import type { GameConfig } from '../types';
 import { SceneManager } from './SceneManager';
 import { AssetLoader } from './AssetLoader';
 import { GameLoop } from './GameLoop';

@@ -1,4 +1,4 @@
-import { Container, Graphics } from 'pixi.js';
+import { Container } from 'pixi.js';
 
 /**
  * Temel entity sınıfı
@@ -7,15 +7,15 @@ import { Container, Graphics } from 'pixi.js';
 export abstract class Entity extends Container {
   protected velocity: { x: number; y: number };
   protected speed: number;
-  public width: number;
-  public height: number;
+  public entityWidth: number;
+  public entityHeight: number;
 
   constructor(x: number, y: number, width: number = 50, height: number = 50) {
     super();
     
     this.position.set(x, y);
-    this.width = width;
-    this.height = height;
+    this.entityWidth = width;
+    this.entityHeight = height;
     this.velocity = { x: 0, y: 0 };
     this.speed = 0;
 
@@ -30,7 +30,7 @@ export abstract class Entity extends Container {
   /**
    * Entity güncelleme (override edilebilir)
    */
-  public update(deltaTime: number): void {
+  public update(_deltaTime: number): void {
     // Override edilebilir
   }
 
@@ -45,14 +45,14 @@ export abstract class Entity extends Container {
   }
 
   /**
-   * Bounding box'ı al (collision için)
+   * Collision bounds'ı al (collision için)
    */
-  public getBounds(): { x: number; y: number; width: number; height: number } {
+  public getCollisionBounds(): { x: number; y: number; width: number; height: number } {
     return {
-      x: this.x - this.width / 2,
-      y: this.y - this.height / 2,
-      width: this.width,
-      height: this.height
+      x: this.x - this.entityWidth / 2,
+      y: this.y - this.entityHeight / 2,
+      width: this.entityWidth,
+      height: this.entityHeight
     };
   }
 }

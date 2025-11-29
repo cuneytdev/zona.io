@@ -1,5 +1,4 @@
 import { Container, Text, Graphics } from 'pixi.js';
-import { GAME_WIDTH } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
 import { i18n } from '@utils/i18n';
 

@@ -4,7 +4,7 @@ import type { SceneManager } from '@core/SceneManager';
 import { BaseScene } from './BaseScene';
 import { Button } from '@ui/Button';
 import { LanguageSwitcher } from '@ui/LanguageSwitcher';
-import { GAME_WIDTH, GAME_HEIGHT } from '@utils/Constants';
+import { GameDimensions } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
 import { i18n } from '@utils/i18n';
 
@@ -33,10 +33,10 @@ export class MenuScene extends BaseScene {
   protected onCreate(): void {
     // Animated gradient background (deep void) - Design System
     const background = new Graphics();
-    const gradient = new FillGradient(0, 0, 0, GAME_HEIGHT);
+    const gradient = new FillGradient(0, 0, 0, GameDimensions.GAME_HEIGHT);
     gradient.addColorStop(0, DS.colors.background.primary);
     gradient.addColorStop(1, DS.colors.background.secondary);
-    background.rect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    background.rect(0, 0, GameDimensions.GAME_WIDTH, GameDimensions.GAME_HEIGHT);
     background.fill(gradient);
     this.container.addChild(background);
 
@@ -124,7 +124,7 @@ export class MenuScene extends BaseScene {
 
     // Language switcher - Top right
     this.langSwitcher = new LanguageSwitcher();
-    this.langSwitcher.position.set(GAME_WIDTH - 140, DS.layout.positions.hudPadding);
+    this.langSwitcher.position.set(GameDimensions.GAME_WIDTH - 140, DS.layout.positions.hudPadding);
     this.container.addChild(this.langSwitcher);
 
     // Version text - Design System
@@ -132,7 +132,7 @@ export class MenuScene extends BaseScene {
       text: i18n.t('common.version'),
       style: DS.presets.text.caption
     });
-    this.versionText.position.set(DS.layout.positions.hudPadding, GAME_HEIGHT - 30);
+    this.versionText.position.set(DS.layout.positions.hudPadding, GameDimensions.GAME_HEIGHT - 30);
     this.container.addChild(this.versionText);
 
     console.log('🎮 ZONA Menu - NEON VOID theme loaded');
@@ -145,15 +145,15 @@ export class MenuScene extends BaseScene {
     this.grid = new Graphics();
     
     // Vertical lines
-    for (let x = 0; x < GAME_WIDTH; x += 50) {
+    for (let x = 0; x < GameDimensions.GAME_WIDTH; x += 50) {
       this.grid.moveTo(x, 0);
-      this.grid.lineTo(x, GAME_HEIGHT);
+      this.grid.lineTo(x, GameDimensions.GAME_HEIGHT);
     }
     
     // Horizontal lines
-    for (let y = 0; y < GAME_HEIGHT; y += 50) {
+    for (let y = 0; y < GameDimensions.GAME_HEIGHT; y += 50) {
       this.grid.moveTo(0, y);
-      this.grid.lineTo(GAME_WIDTH, y);
+      this.grid.lineTo(GameDimensions.GAME_WIDTH, y);
     }
     
     this.grid.stroke({ 
@@ -176,8 +176,8 @@ export class MenuScene extends BaseScene {
         alpha: Math.random() * 0.5 + 0.2 
       });
       
-      const x = Math.random() * GAME_WIDTH;
-      const y = Math.random() * GAME_HEIGHT;
+      const x = Math.random() * GameDimensions.GAME_WIDTH;
+      const y = Math.random() * GameDimensions.GAME_HEIGHT;
       const vy = -(Math.random() * 0.5 + 0.2);
       
       particle.position.set(x, y);
@@ -201,7 +201,7 @@ export class MenuScene extends BaseScene {
 
     for (const pos of positions) {
       const hex = this.createHexagon(hexSize);
-      hex.position.set(GAME_WIDTH / 2 + pos.x, GAME_HEIGHT / 3 + pos.y);
+      hex.position.set(GameDimensions.GAME_WIDTH / 2 + pos.x, DS.layout.positions.titleY + pos.y);
       this.container.addChild(hex);
     }
   }
@@ -249,8 +249,8 @@ export class MenuScene extends BaseScene {
       
       // Reset particle when it goes off screen
       if (particle.y < -10) {
-        particle.y = GAME_HEIGHT + 10;
-        particle.x = Math.random() * GAME_WIDTH;
+        particle.y = GameDimensions.GAME_HEIGHT + 10;
+        particle.x = Math.random() * GameDimensions.GAME_WIDTH;
       }
       
       particle.graphic.position.set(particle.x, particle.y);

@@ -3,7 +3,7 @@ import type { Application as PIXIApplication } from 'pixi.js';
 import type { SceneManager } from '@core/SceneManager';
 import { BaseScene } from './BaseScene';
 import { Button } from '@ui/Button';
-import { GAME_WIDTH, GAME_HEIGHT } from '@utils/Constants';
+import { GameDimensions } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
 import { i18n } from '@utils/i18n';
 
@@ -28,10 +28,10 @@ export class GameOverScene extends BaseScene {
   protected onCreate(): void {
     // Dark gradient background - Design System
     const background = new Graphics();
-    const gradient = new FillGradient(0, 0, 0, GAME_HEIGHT);
+    const gradient = new FillGradient(0, 0, 0, GameDimensions.GAME_HEIGHT);
     gradient.addColorStop(0, DS.colors.background.primary);
     gradient.addColorStop(1, 0x2d1b2e); // Darker tone for game over
-    background.rect(0, 0, GAME_WIDTH, GAME_HEIGHT);
+    background.rect(0, 0, GameDimensions.GAME_WIDTH, GameDimensions.GAME_HEIGHT);
     background.fill(gradient);
     this.container.addChild(background);
 

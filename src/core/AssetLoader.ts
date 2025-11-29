@@ -1,5 +1,5 @@
 import { Assets } from 'pixi.js';
-import type { AssetManifest } from '@types/index';
+import type { AssetManifest } from '../types';
 
 /**
  * Asset yönetim sınıfı

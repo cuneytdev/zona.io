@@ -1,6 +1,6 @@
 import { Graphics, FillGradient } from 'pixi.js';
 import { Entity } from './Entity';
-import { GAME_WIDTH, GAME_HEIGHT } from '@utils/Constants';
+import { GameDimensions } from '@utils/Constants';
 import { DesignSystem as DS } from '@utils/DesignSystem';
 
 /**
@@ -19,7 +19,7 @@ export class Enemy extends Entity {
 
   protected createGraphics(): void {
     this.graphic = new Graphics();
-    const radius = this.width / 2;
+    const radius = this.entityWidth / 2;
     
     // Outer glow
     this.graphic.circle(0, 0, radius + 5);
@@ -57,7 +57,7 @@ export class Enemy extends Entity {
     this.x += this.speed * this.moveDirection;
 
     // Ekran kenarına gelince yön değiştir
-    if (this.x <= this.width / 2 || this.x >= GAME_WIDTH - this.width / 2) {
+    if (this.x <= this.entityWidth / 2 || this.x >= GameDimensions.GAME_WIDTH - this.entityWidth / 2) {
       this.moveDirection *= -1;
     }
 
