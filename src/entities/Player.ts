@@ -49,7 +49,7 @@ export class Player extends Entity {
   /**
    * Oyuncu güncelleme (input ile)
    */
-  public updatePlayer(deltaTime: number, inputSystem: InputSystem): void {
+  public updatePlayer(deltaTime: number, inputSystem: InputSystem, contentWidth?: number, contentHeight?: number): void {
     super.update(deltaTime);
 
     // Hareket kontrolü
@@ -73,12 +73,15 @@ export class Player extends Entity {
     this.x += this.velocity.x;
     this.y += this.velocity.y;
 
-    // Ekran sınırları
+    // Ekran sınırları (content area or full screen)
+    const maxWidth = contentWidth || GameDimensions.GAME_WIDTH;
+    const maxHeight = contentHeight || GameDimensions.GAME_HEIGHT;
+    
     this.clampPosition(
       this.entityWidth / 2,
-      GameDimensions.GAME_WIDTH - this.entityWidth / 2,
+      maxWidth - this.entityWidth / 2,
       this.entityHeight / 2,
-      GameDimensions.GAME_HEIGHT - this.entityHeight / 2
+      maxHeight - this.entityHeight / 2
     );
   }
 }

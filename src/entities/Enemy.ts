@@ -50,14 +50,16 @@ export class Enemy extends Entity {
   /**
    * Düşman güncelleme (basit AI + pulse animation)
    */
-  public update(deltaTime: number): void {
+  public update(deltaTime: number, contentWidth?: number): void {
     super.update(deltaTime);
 
     // Basit yatay hareket (sağa-sola)
     this.x += this.speed * this.moveDirection;
 
-    // Ekran kenarına gelince yön değiştir
-    if (this.x <= this.entityWidth / 2 || this.x >= GameDimensions.GAME_WIDTH - this.entityWidth / 2) {
+    // Ekran kenarına gelince yön değiştir (content area or full screen)
+    const maxWidth = contentWidth || GameDimensions.GAME_WIDTH;
+    
+    if (this.x <= this.entityWidth / 2 || this.x >= maxWidth - this.entityWidth / 2) {
       this.moveDirection *= -1;
     }
 

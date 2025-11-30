@@ -1,4 +1,4 @@
-import { Graphics, FillGradient } from 'pixi.js';
+import { Graphics, FillGradient, Container } from 'pixi.js';
 import type { Application as PIXIApplication } from 'pixi.js';
 import type { SceneManager } from '@core/SceneManager';
 import { BaseScene } from './BaseScene';
@@ -21,6 +21,11 @@ export class GameScene extends BaseScene {
   private inputSystem!: InputSystem;
   private collisionSystem!: CollisionSystem;
   private score: number = 0;
+  
+  // Game area with border
+  private contentContainer!: Container;
+  private border!: Graphics;
+  private readonly borderPadding = 80; // 5rem = 80px
 
   constructor(app: PIXIApplication, sceneManager: SceneManager) {
     super(app, sceneManager, 'game');
@@ -36,23 +41,33 @@ export class GameScene extends BaseScene {
     background.fill(gradient);
     this.container.addChild(background);
 
+    // Create border around game area
+    this.createBorder();
+
+    // Create content container with padding
+    this.contentContainer = new Container();
+    this.contentContainer.position.set(this.borderPadding, this.borderPadding);
+    this.container.addChild(this.contentContainer);
+
     // Sistemleri başlat
     this.inputSystem = new InputSystem();
     this.collisionSystem = new CollisionSystem();
 
-    // Oyuncu oluştur
-    this.player = new Player(GameDimensions.GAME_WIDTH / 2, GameDimensions.GAME_HEIGHT - 100);
-    this.container.addChild(this.player);
+    // Oyuncu oluştur (content area içinde)
+    const contentWidth = GameDimensions.GAME_WIDTH - this.borderPadding * 2;
+    const contentHeight = GameDimensions.GAME_HEIGHT - this.borderPadding * 2;
+    this.player = new Player(contentWidth / 2, contentHeight - 100);
+    this.contentContainer.addChild(this.player);
 
-    // Test düşmanı
-    const enemy = new Enemy(GameDimensions.GAME_WIDTH / 2, 100);
+    // Test düşmanı (content area içinde)
+    const enemy = new Enemy(contentWidth / 2, 100);
     this.enemies.push(enemy);
-    this.container.addChild(enemy);
+    this.contentContainer.addChild(enemy);
 
-    // HUD
+    // HUD (content area içinde)
     this.hud = new HUD();
     this.hud.setScore(this.score);
-    this.container.addChild(this.hud);
+    this.contentContainer.addChild(this.hud);
 
     // ESC tuşu ile menüye dön
     this.inputSystem.onKeyPress('Escape', () => {
@@ -62,13 +77,62 @@ export class GameScene extends BaseScene {
     console.log('🎮 Game scene - NEON VOID theme loaded');
   }
 
+  /**
+   * Create border around the game area
+   */
+  private createBorder(): void {
+    this.border = new Graphics();
+    
+    const width = GameDimensions.GAME_WIDTH;
+    const height = GameDimensions.GAME_HEIGHT;
+    const padding = this.borderPadding;
+    
+    // Inner rectangle (game area border)
+    this.border.rect(padding, padding, width - padding * 2, height - padding * 2);
+    this.border.stroke({ 
+      color: DS.colors.neon.cyan, 
+      width: 2,
+      alpha: 0.3
+    });
+    
+    // Corner decorations (small lines at corners)
+    const cornerSize = 20;
+    const corners = [
+      { x: padding, y: padding }, // Top-left
+      { x: width - padding, y: padding }, // Top-right
+      { x: padding, y: height - padding }, // Bottom-left
+      { x: width - padding, y: height - padding }, // Bottom-right
+    ];
+    
+    corners.forEach(({ x, y }) => {
+      // Horizontal line
+      this.border.moveTo(x - cornerSize, y);
+      this.border.lineTo(x + cornerSize, y);
+      
+      // Vertical line
+      this.border.moveTo(x, y - cornerSize);
+      this.border.lineTo(x, y + cornerSize);
+    });
+    
+    this.border.stroke({ 
+      color: DS.colors.neon.cyan, 
+      width: 3,
+      alpha: 0.6
+    });
+    
+    this.container.addChild(this.border);
+  }
+
   protected onUpdate(deltaTime: number): void {
+    const contentWidth = GameDimensions.GAME_WIDTH - this.borderPadding * 2;
+    const contentHeight = GameDimensions.GAME_HEIGHT - this.borderPadding * 2;
+    
     // Oyuncu güncelle
-    this.player.updatePlayer(deltaTime, this.inputSystem);
+    this.player.updatePlayer(deltaTime, this.inputSystem, contentWidth, contentHeight);
 
     // Düşmanları güncelle
     for (const enemy of this.enemies) {
-      enemy.update(deltaTime);
+      enemy.update(deltaTime, contentWidth);
 
       // Çarpışma kontrolü
       if (this.collisionSystem.checkCollision(this.player, enemy)) {

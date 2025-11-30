@@ -201,7 +201,7 @@ export class MenuScene extends BaseScene {
 
     for (const pos of positions) {
       const hex = this.createHexagon(hexSize);
-      hex.position.set(GameDimensions.GAME_WIDTH / 2 + pos.x, DS.layout.positions.titleY + pos.y);
+      hex.position.set(DS.layout.screen.centerX + pos.x, DS.layout.positions.titleY + pos.y);
       this.container.addChild(hex);
     }
   }
