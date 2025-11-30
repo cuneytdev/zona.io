@@ -29,7 +29,8 @@
       "@systems/*": ["src/systems/*"],
       "@ui/*": ["src/ui/*"],
       "@utils/*": ["src/utils/*"],
-      "@types/*": ["src/types/*"]
+      "@types/*": ["src/types/*"],
+      "@game/*": ["src/game/*"]
     }
   },
   "include": ["src"]
